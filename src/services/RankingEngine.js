@@ -39,7 +39,7 @@ class RankingEngine {
 			timeScore * this.weights.timeOfDay +
 			preferenceScore * this.weights.userPreference;
 
-		return Math.round(totalScore * 100);
+		return Math.round(totalScore);
 	}
 
 	// Sistance (closer = better)
