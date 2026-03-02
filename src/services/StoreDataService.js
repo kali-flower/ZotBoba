@@ -1,6 +1,5 @@
 // StoreDataService.js
 // Provides boba shop and cafe data from Google Places API
-// Week 8 - Shreya (with real API integration!)
 
 const GOOGLE_PLACES_API_KEY =
 	process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY || "YOUR_API_KEY_HERE";
