@@ -1,26 +1,21 @@
 // app/(tabs)/index.tsx
-// Full working demo - Context + Stores + Ranking
+// Full working demo - Context + Stores + Ranking + PersonalModel
 // Week 7/8 - Complete Pipeline
 
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+	ActivityIndicator,
+	Button,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
 } from "react-native";
+import { PersonalModel } from "../../src/models/personalModel";
 import ContextAggregator from "../../src/services/ContextAggregator";
 import RankingEngine from "../../src/services/RankingEngine";
 import StoreDataService from "../../src/services/StoreDataService";
-
-// Mock user preferences (your teammate will build the real PersonalModel)
-const MOCK_USER_PREFS = {
-	allergens: ["dairy"],
-	favoriteDrinkTypes: ["fruit_tea", "milk_tea"],
-	favoriteShops: ["store_2"], // Class 302
-};
+import { loadPersonalModel } from "../../src/storage/personalModelStorage";
 
 type ContextData = {
 	location: {
@@ -58,6 +53,9 @@ type RankedStore = {
 export default function App() {
 	const [context, setContext] = useState<ContextData | null>(null);
 	const [rankedStores, setRankedStores] = useState<RankedStore[]>([]);
+	const [personalModel, setPersonalModel] = useState<PersonalModel | null>(
+		null,
+	);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +72,13 @@ export default function App() {
 			setContext(contextData as ContextData);
 			console.log("✅ Context:", contextData);
 
-			// Step 2: Get nearby stores
+			// Step 2: Load user preferences
+			console.log("👤 Loading user preferences...");
+			const userModel = await loadPersonalModel();
+			setPersonalModel(userModel);
+			console.log("✅ Personal model:", userModel);
+
+			// Step 3: Get nearby stores
 			console.log("🏪 Getting stores...");
 			const stores = await StoreDataService.getStoresNearLocation(
 				contextData.location,
@@ -82,13 +86,16 @@ export default function App() {
 			);
 			console.log(`✅ Found ${stores.length} stores`);
 
-			// Step 3: Rank them!
+			// Step 4: Convert PersonalModel to RankingEngine format
+			const userPrefs = {
+				allergens: userModel.allergies, // Note: they call it 'allergies'
+				favoriteDrinkTypes: ["fruit_tea", "milk_tea"], // Hardcoded for now
+				favoriteShops: userModel.favoriteShopIds,
+			};
+
+			// Step 5: Rank them!
 			console.log("🎯 Ranking stores...");
-			const ranked = RankingEngine.rankStores(
-				stores,
-				contextData,
-				MOCK_USER_PREFS,
-			);
+			const ranked = RankingEngine.rankStores(stores, contextData, userPrefs);
 			setRankedStores(ranked);
 			console.log("✅ Top 5 ranked!");
 
@@ -105,6 +112,7 @@ export default function App() {
 		<ScrollView style={styles.container}>
 			<View style={styles.content}>
 				<Text style={styles.title}>🧋 ZotBoba</Text>
+				<Text style={styles.subtitle}>Context-Aware Recommendations</Text>
 
 				<Button
 					title={loading ? "Loading..." : "Get Recommendations"}
@@ -155,7 +163,11 @@ export default function App() {
 							const reason = RankingEngine.getReasonForRanking(
 								store,
 								context!,
-								MOCK_USER_PREFS,
+								{
+									allergens: personalModel?.allergies || [],
+									favoriteDrinkTypes: ["fruit_tea", "milk_tea"],
+									favoriteShops: personalModel?.favoriteShopIds || [],
+								},
 							);
 
 							return (
@@ -190,15 +202,19 @@ export default function App() {
 				)}
 
 				{/* User Preferences Display */}
-				{rankedStores.length > 0 && (
+				{personalModel && rankedStores.length > 0 && (
 					<View style={styles.section}>
 						<Text style={styles.sectionTitle}>👤 Your Preferences</Text>
 						<View style={styles.card}>
 							<Text style={styles.prefText}>
-								🚫 Allergens: {MOCK_USER_PREFS.allergens.join(", ")}
+								🚫 Allergies: {personalModel.allergies.join(", ") || "None"}
 							</Text>
 							<Text style={styles.prefText}>
-								❤️ Favorites: {MOCK_USER_PREFS.favoriteDrinkTypes.join(", ")}
+								🍬 Sweetness: {personalModel.sweetness}
+							</Text>
+							<Text style={styles.prefText}>🧊 Ice: {personalModel.ice}</Text>
+							<Text style={styles.prefText}>
+								⭐ Favorite Shops: {personalModel.favoriteShopIds.length}
 							</Text>
 						</View>
 					</View>
