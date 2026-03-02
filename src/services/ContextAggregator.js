@@ -4,7 +4,8 @@
 import * as Location from "expo-location";
 
 // constants
-const WEATHER_API_KEY = "YOUR_API_KEY_HERE";
+const WEATHER_API_KEY =
+	process.env.EXPO_PUBLIC_WEATHER_API_KEY || "YOUR_API_KEY_HERE";
 const IRVINE_CENTER = { lat: 33.6846, lng: -117.8265 }; // UCI area
 const RADIUS_MILES = 20;
 
