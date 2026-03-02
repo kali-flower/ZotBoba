@@ -1,8 +1,11 @@
 // StoreDataService.js
-// Provides boba shop and cafe data
-// Week 7/8 - Shreya (Priority 1)
+// Provides boba shop and cafe data from Google Places API
+// Week 8 - Shreya (with real API integration!)
 
-// Mock data - real boba shops near UCI/Irvine
+const GOOGLE_PLACES_API_KEY =
+	process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY || "YOUR_API_KEY_HERE";
+
+// Keep mock data as fallback
 const MOCK_STORES = [
 	{
 		id: "store_1",
@@ -127,17 +130,139 @@ const MOCK_STORES = [
 ];
 
 class StoreDataService {
+	constructor() {
+		this.useRealAPI = GOOGLE_PLACES_API_KEY !== "YOUR_API_KEY_HERE";
+	}
+
 	/**
 	 * Get stores near a given location
-	 * @param {object} location - { latitude, longitude }
-	 * @param {number} radiusMiles - Search radius in miles (default: 20)
-	 * @returns {Promise<Array>} - Array of store objects
+	 * Uses Google Places API if available, falls back to mock data
 	 */
 	async getStoresNearLocation(location, radiusMiles = 20) {
-		// Simulate API delay
+		if (this.useRealAPI) {
+			try {
+				return await this.getStoresFromGooglePlaces(location, radiusMiles);
+			} catch (error) {
+				console.warn(
+					"⚠️ Google Places API failed, using mock data:",
+					error.message,
+				);
+				return this.getStoresFromMockData(location, radiusMiles);
+			}
+		} else {
+			console.log("📦 Using mock data (no Google API key configured)");
+			return this.getStoresFromMockData(location, radiusMiles);
+		}
+	}
+
+	/**
+	 * Fetch stores from Google Places API
+	 */
+	async getStoresFromGooglePlaces(location, radiusMiles) {
+		console.log("🌐 Fetching from Google Places API...");
+
+		const radiusMeters = radiusMiles * 1609.34; // Convert miles to meters
+
+		// Search for boba/bubble tea shops
+		const bobaUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=${radiusMeters}&keyword=boba+bubble+tea&key=${GOOGLE_PLACES_API_KEY}`;
+
+		// Search for cafes
+		const cafeUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=${radiusMeters}&type=cafe&key=${GOOGLE_PLACES_API_KEY}`;
+
+		const [bobaResponse, cafeResponse] = await Promise.all([
+			fetch(bobaUrl),
+			fetch(cafeUrl),
+		]);
+
+		if (!bobaResponse.ok || !cafeResponse.ok) {
+			throw new Error("Google Places API request failed");
+		}
+
+		const bobaData = await bobaResponse.json();
+		const cafeData = await cafeResponse.json();
+
+		if (bobaData.status !== "OK" && bobaData.status !== "ZERO_RESULTS") {
+			throw new Error(`Google Places API error: ${bobaData.status}`);
+		}
+
+		// Combine and deduplicate results
+		const allPlaces = [
+			...(bobaData.results || []),
+			...(cafeData.results || []),
+		];
+
+		// Convert to our format
+		const stores = allPlaces.map((place) =>
+			this.convertGooglePlaceToStore(place),
+		);
+
+		// Remove duplicates by place_id
+		const uniqueStores = Array.from(
+			new Map(stores.map((store) => [store.id, store])).values(),
+		);
+
+		console.log(`✅ Found ${uniqueStores.length} stores from Google Places`);
+		return uniqueStores.slice(0, 20); // Limit to 20 stores
+	}
+
+	/**
+	 * Convert Google Place result to our store format
+	 */
+	convertGooglePlaceToStore(place) {
+		// Determine category based on types
+		const isCoffee =
+			place.types?.includes("cafe") ||
+			place.name.toLowerCase().includes("coffee") ||
+			place.name.toLowerCase().includes("starbucks");
+
+		const category = isCoffee ? "coffee" : "boba";
+
+		// Parse hours if available
+		let hours = { open: 9, close: 21 }; // Default
+		if (place.opening_hours?.periods?.[0]) {
+			try {
+				const period = place.opening_hours.periods[0];
+				hours = {
+					open: parseInt(period.open.time.substring(0, 2)),
+					close: parseInt(period.close.time.substring(0, 2)),
+				};
+			} catch (e) {
+				// Use default hours if parsing fails
+			}
+		}
+
+		// Guess menu based on category
+		const menu =
+			category === "coffee" ? ["coffee", "hot_tea"] : ["milk_tea", "fruit_tea"];
+
+		// Assume common allergens (this would ideally come from detailed menu data)
+		const allergens =
+			category === "coffee" ? ["dairy", "soy", "nuts"] : ["dairy"];
+
+		return {
+			id: place.place_id,
+			name: place.name,
+			latitude: place.geometry.location.lat,
+			longitude: place.geometry.location.lng,
+			category,
+			menu,
+			specialties: ["iced", "hot"],
+			hours,
+			allergens,
+			rating: place.rating || 4.0,
+			// Additional Google Places data
+			address: place.vicinity,
+			priceLevel: place.price_level,
+			isOpen: place.opening_hours?.open_now,
+		};
+	}
+
+	/**
+	 * Get stores from mock data (fallback)
+	 */
+	async getStoresFromMockData(location, radiusMiles) {
 		await this.delay(300);
 
-		// Filter stores within radius
 		const nearbyStores = MOCK_STORES.filter((store) => {
 			const distance = this.calculateDistance(
 				location.latitude,
@@ -149,7 +274,7 @@ class StoreDataService {
 		});
 
 		console.log(
-			`📍 Found ${nearbyStores.length} stores within ${radiusMiles} miles`,
+			`📍 Found ${nearbyStores.length} mock stores within ${radiusMiles} miles`,
 		);
 		return nearbyStores;
 	}
