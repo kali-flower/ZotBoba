@@ -9,22 +9,21 @@ type Props = {
     children: ReactNode,
 }
 
-export default function Layout({children}: Props) {
+export default function Layout({ children }: Props) {
     return (
         <View style={styles.container}>
-            <Background>
-                <NavBar/>
-                <View style={styles.content}>{children}</View>
-            </Background>
+            <Background />
+            <NavBar />
+            <View style={styles.content}>{children}</View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-            flex: 1,
-            backgroundColor: colors.background,
-        },
+        flex: 1,
+        backgroundColor: colors.background,
+    },
     content: {
         flex: 1,
     },

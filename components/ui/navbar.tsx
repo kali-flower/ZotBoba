@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingRight: 30,
         paddingLeft: 30,
+        zIndex: 1,
     },
     home: {
         justifyContent: "flex-start",

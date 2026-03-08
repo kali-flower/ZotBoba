@@ -1,9 +1,14 @@
-import { StyleSheet } from "react-native";
+import { colors } from "@/src/theme/tokens";
+import { Dimensions, StyleSheet } from "react-native";
+
+const { width, height } = Dimensions.get("window");
+const smallBobaSize = width * 0.1;
+const bigBobaSize = width * 0.16;
 
 export const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f5f5f5",
+		backgroundColor: colors.background,
 	},
 	content: {
 		padding: 20,
@@ -55,7 +60,10 @@ export const styles = StyleSheet.create({
 		marginBottom: 12,
 	},
 	card: {
-		backgroundColor: "#fff",
+		backgroundColor: colors.search_bg,
+        borderColor: colors.card_border,
+        borderWidth: 1,
+        borderStyle: "solid",
 		padding: 15,
 		borderRadius: 10,
 		shadowColor: "#000",
@@ -70,7 +78,10 @@ export const styles = StyleSheet.create({
 		color: "#333",
 	},
 	storeCard: {
-		backgroundColor: "#fff",
+		backgroundColor: colors.search_bg,
+        borderColor: colors.card_border,
+        borderWidth: 1,
+        borderStyle: "solid",
 		padding: 15,
 		borderRadius: 10,
 		marginBottom: 12,
@@ -88,7 +99,7 @@ export const styles = StyleSheet.create({
 	storeRank: {
 		fontSize: 24,
 		fontWeight: "bold",
-		color: "#0066cc",
+		color: "#000000",
 		marginRight: 12,
 		width: 40,
 	},
@@ -111,7 +122,7 @@ export const styles = StyleSheet.create({
 	score: {
 		fontSize: 28,
 		fontWeight: "bold",
-		color: "#0066cc",
+		color: "#000000",
 	},
 	scoreLabel: {
 		fontSize: 12,
@@ -119,7 +130,7 @@ export const styles = StyleSheet.create({
 	},
 	reason: {
 		fontSize: 14,
-		color: "#555",
+		color: "#666",
 		fontStyle: "italic",
 		marginBottom: 10,
 		paddingLeft: 52,
@@ -128,21 +139,91 @@ export const styles = StyleSheet.create({
 		paddingLeft: 52,
 		paddingTop: 8,
 		borderTopWidth: 1,
-		borderTopColor: "#eee",
+		borderTopColor: "#666",
 	},
 	breakdownTitle: {
 		fontSize: 12,
 		fontWeight: "600",
-		color: "#666",
+		color: "#555",
 		marginBottom: 4,
 	},
 	breakdownText: {
 		fontSize: 11,
-		color: "#888",
+		color: "#666",
 	},
 	prefText: {
 		fontSize: 14,
 		marginBottom: 8,
 		color: "#333",
 	},
+    circleTopLeft: {
+        position: "absolute",
+        width: width*0.1,
+        height: width*0.1,
+        borderRadius: smallBobaSize,
+        backgroundColor: colors.circles,
+        top: 10,
+        left: 60,
+        zIndex: -10,
+    },
+    circleBottomLeft: {
+        position: "absolute",
+        width: width*0.16,
+        height: width*0.16,
+        borderRadius: bigBobaSize,
+        backgroundColor: colors.circles,
+        top: 700,
+        left: -50,
+        zIndex: -10,
+    },
+    circleCenterCenter: {
+        position: "absolute",
+        width: width*0.16,
+        height: width*0.16,
+        borderRadius: bigBobaSize,
+        backgroundColor: colors.circles,
+        top: 250,
+        left: 900,
+        zIndex: -10,
+    },
+    circleBottomCenter: {
+        position: "absolute",
+        width: width*0.1,
+        height: width*0.1,
+        borderRadius: smallBobaSize,
+        backgroundColor: colors.circles,
+        top: 650,
+        left: 550,
+        zIndex: -10,
+    },
+    circleBottomRight: {
+        position: "absolute",
+        width: width*0.16,
+        height: width*0.16,
+        borderRadius: bigBobaSize,
+        backgroundColor: colors.circles,
+        bottom: -110,
+        right: 45,
+        zIndex: -10,
+    },
+    circleTopRight: {
+        position: "absolute",
+        width: width*0.16,
+        height: width*0.16,
+        borderRadius: bigBobaSize,
+        backgroundColor: colors.circles,
+        top: -50,
+        right: -110,
+        zIndex: -10,
+    },
+    circleCenterRight: {
+        position: "absolute",
+        width: width*0.1,
+        height: width*0.1,
+        borderRadius: smallBobaSize,
+        backgroundColor: colors.circles,
+        top: 375,
+        right: 110,
+        zIndex: -10,
+    },
 });

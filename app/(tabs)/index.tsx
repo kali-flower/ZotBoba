@@ -4,15 +4,19 @@
 
 import CurrentContext from "@/components/CurrentContext";
 import RankedStores from "@/components/RankedStores";
+import Background from "@/components/ui/background";
+import Footer from "@/components/ui/footer";
+import NavBar from "@/components/ui/navbar";
 import UserPreferences from "@/components/UserPreferences";
 import { styles } from "@/constants/styles";
 import { ContextData, RankedStore } from "@/constants/types";
+import { colors } from "@/src/theme/tokens";
 import { useState } from "react";
 import {
 	ActivityIndicator,
-	Button,
 	ScrollView,
 	Text,
+	TouchableOpacity,
 	View
 } from "react-native";
 import { PersonalModel } from "../../src/models/personalModel";
@@ -82,47 +86,63 @@ export default function App() {
 	};
 
 	return (
-		<ScrollView style={styles.container}>
-			<View style={styles.content}>
-				<Text style={styles.title}>🧋 ZotBoba</Text>
-				<Text style={styles.subtitle}>Context-Aware Recommendations</Text>
+		<>
+			<NavBar />
+			<ScrollView style={styles.container}>
+				<Background />
+				<View style={styles.content}>
+					<Text style={styles.title}>🧋 ZotBoba</Text>
+					<Text style={styles.subtitle}>Context-Aware Recommendations</Text>
 
-				<Button
-					title={loading ? "Loading..." : "Get Recommendations"}
-					onPress={getRecommendations}
-					disabled={loading}
-				/>
+					<TouchableOpacity
+						onPress={getRecommendations}
+						disabled={loading}
+						style={{
+							backgroundColor: colors.search_bg,
+							padding: 12,
+							borderRadius: 8,
+							borderColor: colors.card_border,
+							borderWidth: 1,
+							borderStyle: "solid"
+						}}
+					>
+						<Text style={{ color: '#333', textAlign: 'center', fontWeight: '600' }}>
+							{loading ? "Loading..." : "Get Recommendations"}
+						</Text>
+					</TouchableOpacity>
 
-				{loading && (
-					<View style={styles.loadingContainer}>
-						<ActivityIndicator size="large" color="#0066cc" />
-						<Text style={styles.loadingText}>Finding best matches...</Text>
-					</View>
-				)}
+					{loading && (
+						<View style={styles.loadingContainer}>
+							<ActivityIndicator size="large" color="#0066cc" />
+							<Text style={styles.loadingText}>Finding best matches...</Text>
+						</View>
+					)}
 
-				{error && (
-					<View style={styles.errorContainer}>
-						<Text style={styles.errorTitle}>❌ Error</Text>
-						<Text style={styles.errorText}>{error}</Text>
-					</View>
-				)}
+					{error && (
+						<View style={styles.errorContainer}>
+							<Text style={styles.errorTitle}>❌ Error</Text>
+							<Text style={styles.errorText}>{error}</Text>
+						</View>
+					)}
 
-				{/* Context Display */}
-				{context && !loading && (
-					<CurrentContext context={context} />
-				)}
+					{/* Context Display */}
+					{context && !loading && (
+						<CurrentContext context={context} />
+					)}
 
-				{/* Ranked Stores */}
-				{context && rankedStores.length > 0 && !loading && (
-					<RankedStores context={context} rankedStores={rankedStores} personalModel={personalModel} />
-				)}
+					{/* Ranked Stores */}
+					{context && rankedStores.length > 0 && !loading && (
+						<RankedStores context={context} rankedStores={rankedStores} personalModel={personalModel} />
+					)}
 
-				{/* User Preferences Display */}
-				{personalModel && rankedStores.length > 0 && (
-					<UserPreferences personalModel={personalModel} />
-				)}
-			</View>
-		</ScrollView>
+					{/* User Preferences Display */}
+					{personalModel && rankedStores.length > 0 && (
+						<UserPreferences personalModel={personalModel} />
+					)}
+				</View>
+			</ScrollView>
+			<Footer/>
+		</>
 	);
 }
 
