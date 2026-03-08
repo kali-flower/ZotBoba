@@ -1,5 +1,6 @@
 import { colors } from "@/src/theme/tokens";
 import { typography } from "@/src/theme/typography";
+import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 
@@ -8,21 +9,21 @@ export default function NavBar() {
         <View style={styles.container}>
 
             <View style={styles.home}>
-                <Pressable onPress={() => console.log("Home1")}>
+                <Pressable onPress={() => router.push('/(tabs)')}>
                     <Text style={styles.title}>ZotBoba</Text>
                 </Pressable>
             </View>
 
             <View style={styles.rightButtons}>
-                <Pressable onPress={() => console.log("Home2")}>
+                <Pressable onPress={() => router.push('/(tabs)')}>
                     <Text style={styles.subtitle}>Home</Text>
                 </Pressable>
 
-                <Pressable onPress={() => console.log("Search")}>
+                <Pressable onPress={() => router.push('/(tabs)/search')}>
                     <Text style={styles.subtitle}>Search</Text>
                 </Pressable>
 
-                <Pressable onPress={() => console.log("Account")}>
+                <Pressable onPress={() => router.push('/(tabs)/settings')}>
                     <Text style={styles.subtitle}>Account</Text>
                 </Pressable>
             </View>
@@ -34,13 +35,14 @@ export default function NavBar() {
 const styles = StyleSheet.create({
     container: {
         height: 80,
-        backgroundColor: colors.navbar,
+        backgroundColor: colors.search_bg,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         paddingRight: 30,
         paddingLeft: 30,
         zIndex: 1,
+        borderBottomColor: 'black'
     },
     home: {
         justifyContent: "flex-start",

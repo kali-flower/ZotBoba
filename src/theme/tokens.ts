@@ -5,5 +5,5 @@ export const colors = {
     text: "#000000",
     circles: "#453F34",
     search_bg: "#F8EDDC",
-    card_border: "#453F34",
+    card_border: "#453F34"
 }

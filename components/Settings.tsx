@@ -1,4 +1,4 @@
-// app/(tabs)/explore.tsx
+// app/(tabs)/settings.tsx
 // Settings screen - Edit user preferences
 // Week 8 - Shreya
 
@@ -16,11 +16,11 @@ import {
   IceLevel,
   PersonalModel,
   SweetnessLevel,
-} from "../../src/models/personalModel";
+} from "../src/models/personalModel";
 import {
   loadPersonalModel,
   savePersonalModel,
-} from "../../src/storage/personalModelStorage";
+} from "../src/storage/personalModelStorage";
 
 const COMMON_ALLERGENS = ["dairy", "nuts", "soy", "gluten", "eggs"];
 

@@ -5,17 +5,16 @@ import NavBar from "@/components/ui/navbar";
 import { styles } from "@/constants/styles";
 import { ScrollView } from "react-native";
 import Recommendations from "../../components/Recommendations";
-import Home from "@/components/Home";
 
-export default function App() {
-	return (
-		<>
-			<NavBar />
-			<ScrollView style={styles.container}>
-				<Background />
-				<Home />
-			</ScrollView>
-			<Footer />
-		</>
-	);
+export default function Search() {
+    return (
+        <>
+            <NavBar />
+            <ScrollView style={styles.container}>
+                <Background />
+                <Recommendations />
+            </ScrollView>
+            <Footer />
+        </>
+    );
 }
