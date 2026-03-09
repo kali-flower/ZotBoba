@@ -1,11 +1,9 @@
 // app/(tabs)/index.tsx
-import Background from "@/components/ui/background";
-import Footer from "@/components/ui/footer";
+import SettingsScreen from "@/components/Settings";
+import Footer from "@/components/ui/Footer";
 import NavBar from "@/components/ui/navbar";
 import { styles } from "@/constants/styles";
 import { ScrollView } from "react-native";
-import Recommendations from "../../components/Recommendations";
-import SettingsScreen from "@/components/Settings";
 
 export default function Settings() {
 	return (
@@ -13,8 +11,8 @@ export default function Settings() {
 			<NavBar />
 			<ScrollView style={styles.container}>
 				<SettingsScreen />
+				<Footer />
 			</ScrollView>
-			<Footer />
 		</>
 	);
 }

@@ -1,11 +1,10 @@
 // app/(tabs)/index.tsx
+import Home from "@/components/Home";
 import Background from "@/components/ui/background";
-import Footer from "@/components/ui/footer";
+import Footer from "@/components/ui/Footer";
 import NavBar from "@/components/ui/navbar";
 import { styles } from "@/constants/styles";
 import { ScrollView } from "react-native";
-import Recommendations from "../../components/Recommendations";
-import Home from "@/components/Home";
 
 export default function App() {
 	return (
@@ -14,8 +13,8 @@ export default function App() {
 			<ScrollView style={styles.container}>
 				<Background />
 				<Home />
+				<Footer />
 			</ScrollView>
-			<Footer />
 		</>
 	);
 }

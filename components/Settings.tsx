@@ -4,22 +4,22 @@
 
 import { useEffect, useState } from "react";
 import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+	Alert,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
 } from "react-native";
 import {
-  IceLevel,
-  PersonalModel,
-  SweetnessLevel,
+	IceLevel,
+	PersonalModel,
+	SweetnessLevel,
 } from "../src/models/personalModel";
 import {
-  loadPersonalModel,
-  savePersonalModel,
+	loadPersonalModel,
+	savePersonalModel,
 } from "../src/storage/personalModelStorage";
 
 const COMMON_ALLERGENS = ["dairy", "nuts", "soy", "gluten", "eggs"];
