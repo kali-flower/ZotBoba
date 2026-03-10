@@ -35,14 +35,15 @@ export default function NavBar() {
 const styles = StyleSheet.create({
     container: {
         height: 80,
-        backgroundColor: colors.search_bg,
+        backgroundColor: colors.navbar,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         paddingRight: 30,
         paddingLeft: 30,
         zIndex: 1,
-        borderBottomColor: 'black'
+        borderBottomColor: 'black',
+        borderBottomWidth: 1
     },
     home: {
         justifyContent: "flex-start",
