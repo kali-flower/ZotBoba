@@ -1,6 +1,7 @@
 import { styles } from "@/constants/styles";
 import { colors } from "@/src/theme/tokens";
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { router } from "expo-router";
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Footer from "./ui/Footer";
 
 
@@ -34,13 +35,14 @@ function HomePage() {
                 <Text style={homepageStyles.title}>
                     Welcome to ZotBoba!
                 </Text>
-                <TouchableOpacity
-                    onPress={() => console.log("pressed")} 
-                    // TODO: link to login or get recommendations when logging in
-                    style={homepageStyles.buttonStyle}
-                >
-                    <Text style={homepageStyles.buttonText}>Get Started</Text>
-                </TouchableOpacity>
+
+                {/* TODO: link to login or get recommendations when logging in */}
+                {/* currently links to just recommendations page */}
+                <View style={homepageStyles.button}>
+                    <Pressable onPress={() => router.push('/(tabs)/search')} style={homepageStyles.buttonStyle}>
+                        <Text style={styles.title}>Get Started</Text>
+                    </Pressable>
+                </View>
             </View>
         </>
     )
@@ -70,9 +72,12 @@ const homepageStyles = StyleSheet.create({
         borderStyle: "solid",
         borderRadius: 17,
         paddingHorizontal: 0,
-		paddingVertical: 12,
-		justifyContent: "center",
-        width: width*0.4,
+        paddingVertical: 12,
+        justifyContent: "center",
+        width: width * 0.4,
         alignSelf: "center"
+    },
+    button: {
+        justifyContent: "center"
     }
 })
