@@ -2,7 +2,6 @@ import { styles } from "@/constants/styles";
 import { colors } from "@/src/theme/tokens";
 import { router } from "expo-router";
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import Footer from "./ui/Footer";
 
 
 const { width, height } = Dimensions.get('window');
@@ -21,7 +20,6 @@ export default function Home() {
                     <View style={styles.circleTopRight} />
                     <View style={styles.circleCenterRight} />
                 </View>
-                <Footer />
             </ScrollView>
         </>
     )

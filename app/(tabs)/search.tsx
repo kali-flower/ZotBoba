@@ -1,5 +1,4 @@
 // app/(tabs)/index.tsx
-import Footer from "@/components/ui/Footer";
 import NavBar from "@/components/ui/navbar";
 import { styles } from "@/constants/styles";
 import { ScrollView, View } from "react-native";
@@ -20,7 +19,6 @@ export default function Search() {
                     <View style={styles.circleTopRight} />
                     <View style={styles.circleCenterRight} />
                 </View>
-                <Footer />
             </ScrollView>
         </>
     );
