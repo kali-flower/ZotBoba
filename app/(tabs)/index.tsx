@@ -1,6 +1,5 @@
 // app/(tabs)/index.tsx
 import Home from "@/components/Home";
-import Background from "@/components/ui/background";
 import Footer from "@/components/ui/Footer";
 import NavBar from "@/components/ui/navbar";
 import { styles } from "@/constants/styles";
@@ -11,7 +10,6 @@ export default function App() {
 		<>
 			<NavBar />
 			<ScrollView style={styles.container}>
-				<Background />
 				<Home />
 				<Footer />
 			</ScrollView>

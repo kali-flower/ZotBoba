@@ -2,6 +2,7 @@
 // Settings screen - Edit user preferences
 // Week 8 - Shreya
 
+import { styles } from "@/constants/styles";
 import { colors } from "@/src/theme/tokens";
 import { useEffect, useState } from "react";
 import {
@@ -21,7 +22,6 @@ import {
 	loadPersonalModel,
 	savePersonalModel,
 } from "../src/storage/personalModelStorage";
-import Background from "./ui/background";
 
 const COMMON_ALLERGENS = ["dairy", "nuts", "soy", "gluten", "eggs"];
 
@@ -62,7 +62,7 @@ export default function SettingsScreen() {
 		const allergens =
 			model.allergies.includes(allergen) ?
 				model.allergies.filter((a) => a !== allergen)
-			:	[...model.allergies, allergen];
+				: [...model.allergies, allergen];
 
 		setModel({ ...model, allergies: allergens });
 	};
@@ -100,176 +100,184 @@ export default function SettingsScreen() {
 
 	if (loading || !model) {
 		return (
-			<View style={styles.container}>
-				<Text style={styles.loadingText}>Loading preferences...</Text>
+			<View style={styles2.container}>
+				<Text style={styles2.loadingText}>Loading preferences...</Text>
 			</View>
 		);
 	}
 
 	return (
 		<>
-			<Background />
-			<View style={styles.content}>
-				<Text style={styles.title}>Account Settings</Text>
-				<Text style={styles.subtitle}>Customize your boba preferences</Text>
-				
-				<View style={styles.contentBackground}>
-					{/* Sweetness Level */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>🍬 Sweetness Level</Text>
-						<View style={styles.optionGroup}>
-							{(["low", "medium", "high"] as SweetnessLevel[]).map((level) => (
-								<TouchableOpacity
-									key={level}
-									style={[
-										styles.optionButton,
-										model.sweetness === level && styles.optionButtonActive,
-									]}
-									onPress={() => setSweetness(level)}
-								>
-									<Text
-										style={[
-											styles.optionText,
-											model.sweetness === level && styles.optionTextActive,
-										]}
-									>
-										{level.charAt(0).toUpperCase() + level.slice(1)}
-									</Text>
-								</TouchableOpacity>
-							))}
-						</View>
-					</View>
+			<View style={styles.container}>
+				<View style={styles.circleTopLeft} />
+				<View style={styles.circleBottomLeft} />
+				<View style={styles.circleCenterCenter} />
+				<View style={styles.circleBottomCenter} />
+				<View style={styles.circleBottomRight} />
+				<View style={styles.circleTopRight} />
+				<View style={styles.circleCenterRight} />
+				<View style={styles2.content}>
+					<Text style={styles2.title}>Account Settings</Text>
+					<Text style={styles2.subtitle}>Customize your boba preferences</Text>
 
-					{/* Ice Level */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>🧊 Ice Level</Text>
-						<View style={styles.optionGroup}>
-							{(["none", "less", "regular", "extra"] as IceLevel[]).map(
-								(level) => (
+					<View style={styles2.contentBackground}>
+						{/* Sweetness Level */}
+						<View style={styles2.section}>
+							<Text style={styles2.sectionTitle}>🍬 Sweetness Level</Text>
+							<View style={styles2.optionGroup}>
+								{(["low", "medium", "high"] as SweetnessLevel[]).map((level) => (
 									<TouchableOpacity
 										key={level}
 										style={[
-											styles.optionButton,
-											model.ice === level && styles.optionButtonActive,
+											styles2.optionButton,
+											model.sweetness === level && styles2.optionButtonActive,
 										]}
-										onPress={() => setIce(level)}
+										onPress={() => setSweetness(level)}
 									>
 										<Text
 											style={[
-												styles.optionText,
-												model.ice === level && styles.optionTextActive,
+												styles2.optionText,
+												model.sweetness === level && styles2.optionTextActive,
 											]}
 										>
 											{level.charAt(0).toUpperCase() + level.slice(1)}
 										</Text>
 									</TouchableOpacity>
-								),
-							)}
-						</View>
-					</View>
-
-					{/* Allergens */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>
-							🚫 Allergens & Dietary Restrictions
-						</Text>
-						<Text style={styles.sectionDescription}>
-							Stores with these allergens will be filtered out
-						</Text>
-
-						{/* Common allergens */}
-						<View style={styles.allergenGrid}>
-							{COMMON_ALLERGENS.map((allergen) => (
-								<TouchableOpacity
-									key={allergen}
-									style={[
-										styles.allergenChip,
-										model.allergies.includes(allergen) &&
-											styles.allergenChipActive,
-									]}
-									onPress={() => toggleAllergen(allergen)}
-								>
-									<Text
-										style={[
-											styles.allergenText,
-											model.allergies.includes(allergen) &&
-												styles.allergenTextActive,
-										]}
-									>
-										{allergen}
-									</Text>
-								</TouchableOpacity>
-							))}
-						</View>
-
-						{/* Custom allergens */}
-						{model.allergies.filter((a) => !COMMON_ALLERGENS.includes(a)).length >
-							0 && (
-							<View style={styles.customAllergensContainer}>
-								<Text style={styles.customAllergensTitle}>Custom:</Text>
-								<View style={styles.allergenGrid}>
-									{model.allergies
-										.filter((a) => !COMMON_ALLERGENS.includes(a))
-										.map((allergen) => (
-											<TouchableOpacity
-												key={allergen}
-												style={[styles.allergenChip, styles.allergenChipActive]}
-												onPress={() => removeAllergen(allergen)}
-											>
-												<Text
-													style={[styles.allergenText, styles.allergenTextActive]}
-												>
-													{allergen} ✕
-												</Text>
-											</TouchableOpacity>
-										))}
-								</View>
+								))}
 							</View>
-						)}
-
-						{/* Add custom allergen */}
-						<View style={styles.addAllergenContainer}>
-							<TextInput
-								style={styles.allergenInput}
-								placeholder="Add custom allergen..."
-								value={newAllergen}
-								onChangeText={setNewAllergen}
-								onSubmitEditing={addCustomAllergen}
-							/>
-							<TouchableOpacity
-								style={styles.addButton}
-								onPress={addCustomAllergen}
-							>
-								<Text style={styles.addButtonText}>Add</Text>
-							</TouchableOpacity>
 						</View>
-					</View>
 
-					{/* Summary */}
-					<View style={styles.summarySection}>
-						<Text style={styles.summaryTitle}>📋 Your Preferences</Text>
-						<View style={styles.summaryCard}>
-							<Text style={styles.summaryText}>Sweetness: {model.sweetness}</Text>
-							<Text style={styles.summaryText}>Ice: {model.ice}</Text>
-							<Text style={styles.summaryText}>
-								Allergens:{" "}
-								{model.allergies.length === 0 ?
-									"None"
-								:	model.allergies.join(", ")}
+						{/* Ice Level */}
+						<View style={styles2.section}>
+							<Text style={styles2.sectionTitle}>🧊 Ice Level</Text>
+							<View style={styles2.optionGroup}>
+								{(["none", "less", "regular", "extra"] as IceLevel[]).map(
+									(level) => (
+										<TouchableOpacity
+											key={level}
+											style={[
+												styles2.optionButton,
+												model.ice === level && styles2.optionButtonActive,
+											]}
+											onPress={() => setIce(level)}
+										>
+											<Text
+												style={[
+													styles2.optionText,
+													model.ice === level && styles2.optionTextActive,
+												]}
+											>
+												{level.charAt(0).toUpperCase() + level.slice(1)}
+											</Text>
+										</TouchableOpacity>
+									),
+								)}
+							</View>
+						</View>
+
+						{/* Allergens */}
+						<View style={styles2.section}>
+							<Text style={styles2.sectionTitle}>
+								🚫 Allergens & Dietary Restrictions
 							</Text>
-						</View>
-					</View>
+							<Text style={styles2.sectionDescription}>
+								Stores with these allergens will be filtered out
+							</Text>
 
-					{/* Save Button */}
-					<TouchableOpacity
-						style={[styles.saveButton, saving && styles.saveButtonDisabled]}
-						onPress={handleSave}
-						disabled={saving}
-					>
-						<Text style={styles.saveButtonText}>
-							{saving ? "Saving..." : "Save Preferences"}
-						</Text>
-					</TouchableOpacity>
+							{/* Common allergens */}
+							<View style={styles2.allergenGrid}>
+								{COMMON_ALLERGENS.map((allergen) => (
+									<TouchableOpacity
+										key={allergen}
+										style={[
+											styles2.allergenChip,
+											model.allergies.includes(allergen) &&
+											styles2.allergenChipActive,
+										]}
+										onPress={() => toggleAllergen(allergen)}
+									>
+										<Text
+											style={[
+												styles2.allergenText,
+												model.allergies.includes(allergen) &&
+												styles2.allergenTextActive,
+											]}
+										>
+											{allergen}
+										</Text>
+									</TouchableOpacity>
+								))}
+							</View>
+
+							{/* Custom allergens */}
+							{model.allergies.filter((a) => !COMMON_ALLERGENS.includes(a)).length >
+								0 && (
+									<View style={styles2.customAllergensContainer}>
+										<Text style={styles2.customAllergensTitle}>Custom:</Text>
+										<View style={styles2.allergenGrid}>
+											{model.allergies
+												.filter((a) => !COMMON_ALLERGENS.includes(a))
+												.map((allergen) => (
+													<TouchableOpacity
+														key={allergen}
+														style={[styles2.allergenChip, styles2.allergenChipActive]}
+														onPress={() => removeAllergen(allergen)}
+													>
+														<Text
+															style={[styles2.allergenText, styles2.allergenTextActive]}
+														>
+															{allergen} ✕
+														</Text>
+													</TouchableOpacity>
+												))}
+										</View>
+									</View>
+								)}
+
+							{/* Add custom allergen */}
+							<View style={styles2.addAllergenContainer}>
+								<TextInput
+									style={styles2.allergenInput}
+									placeholder="Add custom allergen..."
+									value={newAllergen}
+									onChangeText={setNewAllergen}
+									onSubmitEditing={addCustomAllergen}
+								/>
+								<TouchableOpacity
+									style={styles2.addButton}
+									onPress={addCustomAllergen}
+								>
+									<Text style={styles2.addButtonText}>Add</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+
+						{/* Summary */}
+						<View style={styles2.summarySection}>
+							<Text style={styles2.summaryTitle}>📋 Your Preferences</Text>
+							<View style={styles2.summaryCard}>
+								<Text style={styles2.summaryText}>Sweetness: {model.sweetness}</Text>
+								<Text style={styles2.summaryText}>Ice: {model.ice}</Text>
+								<Text style={styles2.summaryText}>
+									Allergens:{" "}
+									{model.allergies.length === 0 ?
+										"None"
+										: model.allergies.join(", ")}
+								</Text>
+							</View>
+						</View>
+
+						{/* Save Button */}
+						<TouchableOpacity
+							style={[styles2.saveButton, saving && styles2.saveButtonDisabled]}
+							onPress={handleSave}
+							disabled={saving}
+						>
+							<Text style={styles2.saveButtonText}>
+								{saving ? "Saving..." : "Save Preferences"}
+							</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</View>
 		</>
@@ -277,7 +285,7 @@ export default function SettingsScreen() {
 }
 
 
-const styles = StyleSheet.create({
+const styles2 = StyleSheet.create({
 	contentBackground: {
 		backgroundColor: colors.search_bg,
 		borderColor: colors.card_border,

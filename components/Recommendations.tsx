@@ -59,7 +59,7 @@ export default function Recommendations() {
         onPress={getRecommendations}
         disabled={loading}
         style={{
-          backgroundColor: colors.search_bg,
+          backgroundColor: colors.navbar,
           padding: 12,
           borderRadius: 8,
           borderColor: colors.card_border,
