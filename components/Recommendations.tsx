@@ -8,7 +8,8 @@ import { PersonalModel } from "@/src/models/personalModel";
 import ContextAggregator from "@/src/services/ContextAggregator";
 import RankingEngine from "@/src/services/RankingEngine";
 import StoreDataService from "@/src/services/StoreDataService";
-import { loadPersonalModel } from "@/src/storage/personalModelStorage";
+import { getCurrentUser } from "@/src/storage/currentUserControls";
+import { loadPersonalModel } from "@/src/storage/personalModelUse";
 import { colors } from "@/src/theme/tokens";
 import { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
@@ -27,7 +28,8 @@ export default function Recommendations() {
       const contextData = (await ContextAggregator.aggregateContext()) as any;
       setContext(contextData as ContextData);
 
-      const userModel = await loadPersonalModel();
+      const user = await getCurrentUser();
+      const userModel = await loadPersonalModel(user!);
       setPersonalModel(userModel);
 
       const stores = await StoreDataService.getStoresNearLocation(
