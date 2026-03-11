@@ -3,7 +3,10 @@
 // Week 8 - Shreya
 
 import { styles } from "@/constants/styles";
+import { getCurrentUser, logout } from "@/src/storage/currentUserControls";
+import { loadPersonalModel, savePersonalModel } from "@/src/storage/personalModelUse";
 import { colors } from "@/src/theme/tokens";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
 	Alert,
@@ -18,10 +21,6 @@ import {
 	PersonalModel,
 	SweetnessLevel,
 } from "../src/models/personalModel";
-import {
-	loadPersonalModel,
-	savePersonalModel,
-} from "../src/storage/personalModelStorage";
 
 const COMMON_ALLERGENS = ["dairy", "nuts", "soy", "gluten", "eggs"];
 
@@ -37,17 +36,24 @@ export default function SettingsScreen() {
 
 	const loadPreferences = async () => {
 		setLoading(true);
-		const loaded = await loadPersonalModel();
+		const user = await getCurrentUser();
+		const loaded = await loadPersonalModel(user!);
 		setModel(loaded);
 		setLoading(false);
 	};
+
+	const logoutUser = async () => {
+		await logout();
+		router.replace("/(tabs)");
+	}
 
 	const handleSave = async () => {
 		if (!model) return;
 
 		setSaving(true);
 		try {
-			await savePersonalModel(model);
+			const user = await getCurrentUser();
+			await savePersonalModel(user!, model);
 			Alert.alert("Saved!", "Your preferences have been updated.");
 		} catch (error) {
 			Alert.alert("Error", "Failed to save preferences.");
@@ -277,6 +283,16 @@ export default function SettingsScreen() {
 								{saving ? "Saving..." : "Save Preferences"}
 							</Text>
 						</TouchableOpacity>
+
+						{/* Logout Button */}
+						<TouchableOpacity
+							style={styles2.logoutButton}
+							onPress={logoutUser}
+						>
+							<Text style={styles2.logoutButtonText}>
+								{<u>Logout</u>}
+							</Text>
+						</TouchableOpacity>
 					</View>
 				</View>
 			</View>
@@ -296,6 +312,15 @@ const styles2 = StyleSheet.create({
 		paddingBottom: 30,
 		paddingLeft: 20,
 		paddingRight: 20
+	},
+	logoutButton: {
+		paddingTop: 16,
+		alignItems: "center",
+	},
+	logoutButtonText: {
+		fontSize: 13,
+		color: "#666",
+		marginBottom: 12,
 	},
 	container: {
 		flex: 1,

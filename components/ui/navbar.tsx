@@ -1,10 +1,22 @@
+import { getCurrentUser } from "@/src/storage/currentUserControls";
 import { colors } from "@/src/theme/tokens";
 import { typography } from "@/src/theme/typography";
 import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 
 export default function NavBar() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const user = await getCurrentUser();
+            setIsLoggedIn(!!user);
+        }
+        checkUser();
+    }, []);
+
     return (
         <View style={styles.container}>
 
@@ -19,12 +31,14 @@ export default function NavBar() {
                     <Text style={styles.subtitle}>Home</Text>
                 </Pressable>
 
-                <Pressable onPress={() => router.push('/(tabs)/search')}>
+                <Pressable onPress={() => router.push(isLoggedIn ? '/(tabs)/search' : '/(tabs)/login')}>
                     <Text style={styles.subtitle}>Search</Text>
                 </Pressable>
 
-                <Pressable onPress={() => router.push('/(tabs)/settings')}>
-                    <Text style={styles.subtitle}>Account</Text>
+                <Pressable onPress={() => router.push(isLoggedIn ? '/(tabs)/settings' : '/(tabs)/login')}>
+                    <Text style={styles.subtitle}>{
+                        isLoggedIn ? "Account" : "Login"
+                    }</Text>
                 </Pressable>
             </View>
 
