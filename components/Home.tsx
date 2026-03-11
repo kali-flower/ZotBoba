@@ -56,7 +56,8 @@ const homepageStyles = StyleSheet.create({
     titleContatiner: {
         flex: 1,
         justifyContent: "center",
-        marginTop: height * -0.45
+        marginTop: height * -0.45,
+        flexGrow: 1
     },
     buttonText: {
         fontSize: 14,
