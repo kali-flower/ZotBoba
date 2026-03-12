@@ -1,6 +1,10 @@
+// RankingEngine.js
+// Ranks boba shops based on context and preferences
+// Week 7 - Shreya (UPDATED with proper ratings scoring)
+
 class RankingEngine {
 	constructor() {
-		// weights for different factors
+		// Weights for different factors (can be tuned later)
 		this.weights = {
 			distance: 0.3, // 30% - how far away
 			weather: 0.2, // 20% - weather match
@@ -9,40 +13,50 @@ class RankingEngine {
 		};
 	}
 
-	// rank all stores
+	// Main method: rank all stores
 	rankStores(stores, context, userPreferences) {
+		// Score each store
 		const scoredStores = stores.map((store) => {
 			const score = this.calculateScore(store, context, userPreferences);
 			return {
 				...store,
 				score: score,
 				breakdown: this.getScoreBreakdown(store, context, userPreferences),
+				isFavorite: userPreferences.favoriteShops?.includes(store.id) || false, // Track if favorite
 			};
 		});
 
-		const ranked = scoredStores.sort((a, b) => b.score - a.score);
+		// favorites first, then by score
+		const ranked = scoredStores.sort((a, b) => {
+			// Favorites always come first
+			if (a.isFavorite && !b.isFavorite) return -1;
+			if (!a.isFavorite && b.isFavorite) return 1;
+			// if both favorites or both not, sort by score
+			return b.score - a.score;
+		});
 
-		// return top 5
+		// Return top 5
 		return ranked.slice(0, 5);
 	}
 
-	// calculate total score for a store
+	// Calculate total score for a store
 	calculateScore(store, context, userPreferences) {
 		const distanceScore = this.scoreDistance(store, context.location);
 		const weatherScore = this.scoreWeather(store, context.weather);
 		const timeScore = this.scoreTimeOfDay(store, context.timeOfDay);
 		const preferenceScore = this.scoreUserPreference(store, userPreferences);
 
+		// Weighted sum
 		const totalScore =
 			distanceScore * this.weights.distance +
 			weatherScore * this.weights.weather +
 			timeScore * this.weights.timeOfDay +
 			preferenceScore * this.weights.userPreference;
 
-		return Math.round(totalScore);
+		return Math.round(totalScore); // Score out of 100
 	}
 
-	// Sistance (closer = better)
+	// Score #1: Distance (closer = better)
 	scoreDistance(store, userLocation) {
 		const distance = this.calculateDistance(
 			userLocation.latitude,
@@ -59,6 +73,7 @@ class RankingEngine {
 		return 0;
 	}
 
+	// Helper: Calculate distance between two points
 	calculateDistance(lat1, lon1, lat2, lon2) {
 		const R = 3959; // Earth radius in miles
 		const dLat = this.toRadians(lat2 - lat1);
@@ -79,7 +94,7 @@ class RankingEngine {
 		return degrees * (Math.PI / 180);
 	}
 
-	// weather match
+	// Score #2: Weather match
 	scoreWeather(store, weather) {
 		const temp = weather.temperature;
 
@@ -104,18 +119,18 @@ class RankingEngine {
 			}
 			return 70;
 		}
+
 		return 85;
 	}
 
-	// time of day
+	// Score #3: Time of day
 	scoreTimeOfDay(store, timeOfDay) {
 		const hour = timeOfDay.hour;
 
-		// check if store is open
 		if (store.hours) {
 			const isOpen = this.isStoreOpen(store.hours, hour);
 			if (!isOpen) {
-				return 0; // Closed = no points
+				return 0;
 			}
 		}
 
@@ -132,6 +147,7 @@ class RankingEngine {
 
 	isStoreOpen(hours, currentHour) {
 		if (!hours.open || !hours.close) return true;
+
 		if (hours.close < hours.open) {
 			return currentHour >= hours.open || currentHour < hours.close;
 		}
@@ -139,19 +155,21 @@ class RankingEngine {
 		return currentHour >= hours.open && currentHour < hours.close;
 	}
 
-	// user preference match
+	// Score #4: User preference match (UPDATED - now reads ratings from userPreferences)
 	scoreUserPreference(store, userPreferences) {
-		let score = 50;
+		let score = 50; // Base score
 
+		// Check allergens - CRITICAL
 		if (userPreferences.allergens && userPreferences.allergens.length > 0) {
 			const hasAllergen = userPreferences.allergens.some((allergen) =>
 				store.allergens?.includes(allergen),
 			);
 			if (hasAllergen) {
-				return 0;
+				return 0; // HARD NO if allergen present
 			}
 		}
 
+		// Check drink type preference
 		if (userPreferences.favoriteDrinkTypes && store.menu) {
 			const matchingTypes = userPreferences.favoriteDrinkTypes.filter((type) =>
 				store.menu.includes(type),
@@ -159,18 +177,31 @@ class RankingEngine {
 			score += matchingTypes.length * 15;
 		}
 
+		// Check if it's a favorite shop
 		if (userPreferences.favoriteShops?.includes(store.id)) {
-			score += 30;
+			score += 30; // Big bonus for favorites
 		}
 
-		if (store.userRating) {
-			if (store.userRating >= 4) score += 20;
-			if (store.userRating <= 2) score -= 30;
+		// Check user's ratings (UPDATED - reads from ratings array in userPreferences)
+		if (userPreferences.ratings) {
+			const userRating = userPreferences.ratings.find(
+				(r) => r.storeId === store.id,
+			);
+			if (userRating) {
+				// 5 stars = +30, 4 stars = +20, 3 stars = +0, 2 stars = -20, 1 star = -30
+				if (userRating.rating === 5) score += 30;
+				else if (userRating.rating === 4) score += 20;
+				else if (userRating.rating === 3)
+					score += 0; // neutral
+				else if (userRating.rating === 2) score -= 20;
+				else if (userRating.rating === 1) score -= 30;
+			}
 		}
 
-		return Math.min(score, 100);
+		return Math.min(Math.max(score, 0), 100); // Clamp between 0-100
 	}
 
+	// Helper: Get detailed score breakdown
 	getScoreBreakdown(store, context, userPreferences) {
 		return {
 			distance: this.scoreDistance(store, context.location),
@@ -180,6 +211,7 @@ class RankingEngine {
 		};
 	}
 
+	// Helper: Get human-readable reason for ranking
 	getReasonForRanking(store, context, userPreferences) {
 		const reasons = [];
 

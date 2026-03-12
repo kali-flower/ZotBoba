@@ -1,18 +1,25 @@
-export type SweetnessLevel = "low" | "medium" | "high"; // for now
-export type IceLevel = "none" | "less" | "regular" | "extra"; // for now
+export type SweetnessLevel = "low" | "medium" | "high";
+export type IceLevel = "none" | "less" | "regular" | "extra";
+
+export type StoreRating = {
+	storeId: string;
+	storeName: string;
+	rating: number; // 1-5
+	ratedAt: string;
+};
 
 export type PersonalModel = {
-  sweetness: SweetnessLevel;
-  ice: IceLevel;
-
-  // keep it simple for now
-  allergies: string[];        // e.g. ["dairy", "nuts"]
-  favoriteShopIds: string[];  // store IDs from Yelp/Places later
+	sweetness: SweetnessLevel;
+	ice: IceLevel;
+	allergies: string[];
+	favoriteShopIds: string[];
+	ratings: StoreRating[];
 };
 
 export const DEFAULT_PERSONAL_MODEL: PersonalModel = {
-  sweetness: "medium",
-  ice: "regular",
-  allergies: [],
-  favoriteShopIds: [],
+	sweetness: "medium",
+	ice: "regular",
+	allergies: [],
+	favoriteShopIds: [],
+	ratings: [],
 };
