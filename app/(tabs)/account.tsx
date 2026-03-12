@@ -2,7 +2,7 @@
 // Account page - View and manage favorites, ratings, and preferences
 // Week 8 - Final
 
-import NavBar from "@/components/ui/navbar"; // ADD THIS IMPORT
+import NavBar from "@/components/ui/navbar";
 import { PersonalModel } from "@/src/models/personalModel";
 import { getCurrentUser, logout } from "@/src/storage/currentUserControls";
 import {
