@@ -3,9 +3,7 @@ import { ContextData, RankedStore } from "@/constants/types";
 import { PersonalModel } from "@/src/models/personalModel";
 import RankingEngine from "@/src/services/RankingEngine";
 import { getCurrentUser } from "@/src/storage/currentUserControls";
-import {
-    savePersonalModel
-} from "@/src/storage/personalModelUse";
+import { savePersonalModel } from "@/src/storage/personalModelUse";
 import { useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 
@@ -20,7 +18,7 @@ export default function RankedStores(props: Props) {
 	const context = props.context;
 	const [personalModel, setPersonalModel] = useState(props.personalModel);
 
-	const toggleFavorite = async (storeId: string) => {
+	const toggleFavorite = async (storeId: string, storeName: string) => {
 		if (!personalModel) return;
 
 		const username = await getCurrentUser();
@@ -35,9 +33,24 @@ export default function RankedStores(props: Props) {
 				personalModel.favoriteShopIds.filter((id) => id !== storeId)
 			:	[...personalModel.favoriteShopIds, storeId];
 
+		let updatedRatings = personalModel.ratings || [];
+		if (!isFavorite && !updatedRatings.find((r) => r.storeId === storeId)) {
+			// Add a placeholder rating with just the name
+			updatedRatings = [
+				...updatedRatings,
+				{
+					storeId,
+					storeName,
+					rating: 0, // 0 = not rated yet, just storing the name
+					ratedAt: new Date().toISOString(),
+				},
+			];
+		}
+
 		const updatedModel = {
 			...personalModel,
 			favoriteShopIds: updatedFavorites,
+			ratings: updatedRatings,
 		};
 		setPersonalModel(updatedModel);
 		await savePersonalModel(username, updatedModel);
@@ -131,7 +144,7 @@ export default function RankedStores(props: Props) {
 							{/* Favorite Button */}
 							<TouchableOpacity
 								style={styles.favoriteButton}
-								onPress={() => toggleFavorite(store.id)}
+								onPress={() => toggleFavorite(store.id, store.name)}
 							>
 								<Text style={styles.favoriteIcon}>
 									{isFavorite ? "❤️" : "🤍"}
