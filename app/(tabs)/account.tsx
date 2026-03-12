@@ -1,7 +1,8 @@
-// components/AccountPage.tsx or similar
+// app/(tabs)/account.tsx
 // Account page - View and manage favorites, ratings, and preferences
 // Week 8 - Final
 
+import NavBar from "@/components/ui/navbar"; // ADD THIS IMPORT
 import { PersonalModel } from "@/src/models/personalModel";
 import { getCurrentUser, logout } from "@/src/storage/currentUserControls";
 import {
@@ -124,9 +125,12 @@ export default function AccountPage() {
 
 	if (loading || !personalModel) {
 		return (
-			<View style={styles.container}>
-				<Text style={styles.loadingText}>Loading...</Text>
-			</View>
+			<>
+				<NavBar /> {/* ADD NAVBAR HERE */}
+				<View style={styles.container}>
+					<Text style={styles.loadingText}>Loading...</Text>
+				</View>
+			</>
 		);
 	}
 
@@ -140,144 +144,150 @@ export default function AccountPage() {
 		:	"—";
 
 	return (
-		<ScrollView style={styles.container}>
-			<View style={styles.content}>
-				<Text style={styles.title}>👤 Account</Text>
-				<Text style={styles.subtitle}>Logged in as {username}</Text>
+		<>
+			<NavBar /> {/* ADD NAVBAR HERE */}
+			<ScrollView style={styles.container}>
+				<View style={styles.content}>
+					<Text style={styles.title}>👤 Account</Text>
+					<Text style={styles.subtitle}>Logged in as {username}</Text>
 
-				{/* Stats */}
-				<View style={styles.statsContainer}>
-					<View style={styles.statCard}>
-						<Text style={styles.statNumber}>{favorites.length}</Text>
-						<Text style={styles.statLabel}>Favorites</Text>
+					{/* Stats */}
+					<View style={styles.statsContainer}>
+						<View style={styles.statCard}>
+							<Text style={styles.statNumber}>{favorites.length}</Text>
+							<Text style={styles.statLabel}>Favorites</Text>
+						</View>
+						<View style={styles.statCard}>
+							<Text style={styles.statNumber}>{ratings.length}</Text>
+							<Text style={styles.statLabel}>Rated</Text>
+						</View>
+						<View style={styles.statCard}>
+							<Text style={styles.statNumber}>{avgRating}</Text>
+							<Text style={styles.statLabel}>Avg Rating</Text>
+						</View>
 					</View>
-					<View style={styles.statCard}>
-						<Text style={styles.statNumber}>{ratings.length}</Text>
-						<Text style={styles.statLabel}>Rated</Text>
-					</View>
-					<View style={styles.statCard}>
-						<Text style={styles.statNumber}>{avgRating}</Text>
-						<Text style={styles.statLabel}>Avg Rating</Text>
-					</View>
-				</View>
 
-				{/* Preferences Summary */}
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>⚙️ Preferences</Text>
-					<View style={styles.card}>
-						<Text style={styles.prefText}>
-							🍬 Sweetness: {personalModel.sweetness}
-						</Text>
-						<Text style={styles.prefText}>🧊 Ice: {personalModel.ice}</Text>
-						<Text style={styles.prefText}>
-							🚫 Allergies: {personalModel.allergies.join(", ") || "None"}
-						</Text>
-					</View>
-					<TouchableOpacity
-						style={styles.editButton}
-						onPress={() => router.push("/(tabs)/settings")}
-					>
-						<Text style={styles.editButtonText}>Edit Preferences</Text>
-					</TouchableOpacity>
-				</View>
-
-				{/* Favorites */}
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>❤️ My Favorites</Text>
-					{favorites.length === 0 ?
-						<View style={styles.emptyCard}>
-							<Text style={styles.emptyText}>No favorites yet</Text>
-							<Text style={styles.emptySubtext}>
-								Tap the ❤️ icon on stores to save them here
+					{/* Preferences Summary */}
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>⚙️ Preferences</Text>
+						<View style={styles.card}>
+							<Text style={styles.prefText}>
+								🍬 Sweetness: {personalModel.sweetness}
+							</Text>
+							<Text style={styles.prefText}>🧊 Ice: {personalModel.ice}</Text>
+							<Text style={styles.prefText}>
+								🚫 Allergies: {personalModel.allergies.join(", ") || "None"}
 							</Text>
 						</View>
-					:	favorites.map((storeId, index) => {
-							const rating = ratings.find((r) => r.storeId === storeId);
-							const storeName = rating?.storeName || `Store ${index + 1}`;
+						<TouchableOpacity
+							style={styles.editButton}
+							onPress={() => router.push("/(tabs)/settings")}
+						>
+							<Text style={styles.editButtonText}>Edit Preferences</Text>
+						</TouchableOpacity>
+					</View>
 
-							return (
-								<View key={storeId} style={styles.itemCard}>
-									<View style={styles.itemHeader}>
-										<View style={styles.itemInfo}>
-											<Text style={styles.itemName}>{storeName}</Text>
-											{rating && (
-												<Text style={styles.ratingText}>
-													{"⭐".repeat(rating.rating)} ({rating.rating}/5)
-												</Text>
-											)}
+					{/* Favorites */}
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>❤️ My Favorites</Text>
+						{favorites.length === 0 ?
+							<View style={styles.emptyCard}>
+								<Text style={styles.emptyText}>No favorites yet</Text>
+								<Text style={styles.emptySubtext}>
+									Tap the ❤️ icon on stores to save them here
+								</Text>
+							</View>
+						:	favorites.map((storeId, index) => {
+								const rating = ratings.find((r) => r.storeId === storeId);
+								const storeName = rating?.storeName || `Store ${index + 1}`;
+
+								return (
+									<View key={storeId} style={styles.itemCard}>
+										<View style={styles.itemHeader}>
+											<View style={styles.itemInfo}>
+												<Text style={styles.itemName}>{storeName}</Text>
+												{rating && (
+													<Text style={styles.ratingText}>
+														{"⭐".repeat(rating.rating)} ({rating.rating}/5)
+													</Text>
+												)}
+											</View>
+											<TouchableOpacity
+												style={styles.removeButton}
+												onPress={() => removeFavorite(storeId)}
+											>
+												<Text style={styles.removeText}>Remove</Text>
+											</TouchableOpacity>
 										</View>
-										<TouchableOpacity
-											style={styles.removeButton}
-											onPress={() => removeFavorite(storeId)}
-										>
-											<Text style={styles.removeText}>Remove</Text>
-										</TouchableOpacity>
 									</View>
-								</View>
-							);
-						})
-					}
-				</View>
+								);
+							})
+						}
+					</View>
 
-				{/* Ratings */}
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>⭐ My Ratings</Text>
-					{ratings.length === 0 ?
-						<View style={styles.emptyCard}>
-							<Text style={styles.emptyText}>No ratings yet</Text>
-							<Text style={styles.emptySubtext}>
-								Rate stores to improve your recommendations
-							</Text>
-						</View>
-					:	ratings
-							.sort(
-								(a, b) =>
-									new Date(b.ratedAt).getTime() - new Date(a.ratedAt).getTime(),
-							)
-							.map((rating) => (
-								<View key={rating.storeId} style={styles.itemCard}>
-									<View style={styles.itemHeader}>
-										<View style={styles.itemInfo}>
-											<Text style={styles.itemName}>{rating.storeName}</Text>
-											<Text style={styles.itemDate}>
-												{new Date(rating.ratedAt).toLocaleDateString()}
+					{/* Ratings */}
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>⭐ My Ratings</Text>
+						{ratings.length === 0 ?
+							<View style={styles.emptyCard}>
+								<Text style={styles.emptyText}>No ratings yet</Text>
+								<Text style={styles.emptySubtext}>
+									Rate stores to improve your recommendations
+								</Text>
+							</View>
+						:	ratings
+								.sort(
+									(a, b) =>
+										new Date(b.ratedAt).getTime() -
+										new Date(a.ratedAt).getTime(),
+								)
+								.map((rating) => (
+									<View key={rating.storeId} style={styles.itemCard}>
+										<View style={styles.itemHeader}>
+											<View style={styles.itemInfo}>
+												<Text style={styles.itemName}>{rating.storeName}</Text>
+												<Text style={styles.itemDate}>
+													{new Date(rating.ratedAt).toLocaleDateString()}
+												</Text>
+											</View>
+											<TouchableOpacity
+												style={styles.removeButton}
+												onPress={() => removeRating(rating.storeId)}
+											>
+												<Text style={styles.removeText}>Remove</Text>
+											</TouchableOpacity>
+										</View>
+
+										{/* Editable stars */}
+										<View style={styles.starsRow}>
+											{[1, 2, 3, 4, 5].map((star) => (
+												<TouchableOpacity
+													key={star}
+													onPress={() =>
+														updateRating(rating.storeId, rating.storeName, star)
+													}
+												>
+													<Text style={styles.starLarge}>
+														{star <= rating.rating ? "⭐" : "☆"}
+													</Text>
+												</TouchableOpacity>
+											))}
+											<Text style={styles.ratingNumber}>
+												({rating.rating}/5)
 											</Text>
 										</View>
-										<TouchableOpacity
-											style={styles.removeButton}
-											onPress={() => removeRating(rating.storeId)}
-										>
-											<Text style={styles.removeText}>Remove</Text>
-										</TouchableOpacity>
 									</View>
+								))
+						}
+					</View>
 
-									{/* Editable stars */}
-									<View style={styles.starsRow}>
-										{[1, 2, 3, 4, 5].map((star) => (
-											<TouchableOpacity
-												key={star}
-												onPress={() =>
-													updateRating(rating.storeId, rating.storeName, star)
-												}
-											>
-												<Text style={styles.starLarge}>
-													{star <= rating.rating ? "⭐" : "☆"}
-												</Text>
-											</TouchableOpacity>
-										))}
-										<Text style={styles.ratingNumber}>({rating.rating}/5)</Text>
-									</View>
-								</View>
-							))
-					}
+					{/* Logout Button */}
+					<TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+						<Text style={styles.logoutButtonText}>🚪 Logout</Text>
+					</TouchableOpacity>
 				</View>
-
-				{/* Logout Button */}
-				<TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-					<Text style={styles.logoutButtonText}>🚪 Logout</Text>
-				</TouchableOpacity>
-			</View>
-		</ScrollView>
+			</ScrollView>
+		</>
 	);
 }
 
