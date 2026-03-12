@@ -22,11 +22,18 @@ class RankingEngine {
 				...store,
 				score: score,
 				breakdown: this.getScoreBreakdown(store, context, userPreferences),
+				isFavorite: userPreferences.favoriteShops?.includes(store.id) || false, // Track if favorite
 			};
 		});
 
-		// Sort by score (highest first)
-		const ranked = scoredStores.sort((a, b) => b.score - a.score);
+		// favorites first, then by score
+		const ranked = scoredStores.sort((a, b) => {
+			// Favorites always come first
+			if (a.isFavorite && !b.isFavorite) return -1;
+			if (!a.isFavorite && b.isFavorite) return 1;
+			// if both favorites or both not, sort by score
+			return b.score - a.score;
+		});
 
 		// Return top 5
 		return ranked.slice(0, 5);
