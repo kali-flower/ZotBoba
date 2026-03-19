@@ -316,6 +316,7 @@ const styles2 = StyleSheet.create({
 	logoutButton: {
 		paddingTop: 16,
 		alignItems: "center",
+		alignSelf: "center"
 	},
 	logoutButtonText: {
 		fontSize: 13,

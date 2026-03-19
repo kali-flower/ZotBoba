@@ -6,19 +6,19 @@ import NavBar from "@/components/ui/navbar";
 import { PersonalModel } from "@/src/models/personalModel";
 import { getCurrentUser, logout } from "@/src/storage/currentUserControls";
 import {
-    loadPersonalModel,
-    savePersonalModel,
+	loadPersonalModel,
+	savePersonalModel,
 } from "@/src/storage/personalModelUse";
 import { colors } from "@/src/theme/tokens";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+	Alert,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
 } from "react-native";
 
 export default function AccountPage() {
@@ -45,18 +45,10 @@ export default function AccountPage() {
 		setLoading(false);
 	};
 
-	const handleLogout = async () => {
-		Alert.alert("Logout", "Are you sure you want to logout?", [
-			{ text: "Cancel", style: "cancel" },
-			{
-				text: "Logout",
-				onPress: async () => {
-					await logout();
-					router.replace("/(tabs)/login");
-				},
-			},
-		]);
-	};
+	const logoutUser = async () => {
+		await logout();
+		router.replace("/(tabs)");
+	}
 
 	const removeFavorite = async (storeId: string) => {
 		if (!personalModel || !username) return;
@@ -141,7 +133,7 @@ export default function AccountPage() {
 			(ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(
 				1,
 			)
-		:	"—";
+			: "—";
 
 	return (
 		<>
@@ -197,7 +189,7 @@ export default function AccountPage() {
 									Tap the ❤️ icon on stores to save them here
 								</Text>
 							</View>
-						:	favorites.map((storeId, index) => {
+							: favorites.map((storeId, index) => {
 								const rating = ratings.find((r) => r.storeId === storeId);
 								const storeName = rating?.storeName || `Store ${index + 1}`;
 
@@ -226,7 +218,7 @@ export default function AccountPage() {
 					</View>
 
 					{/* Ratings */}
-					<View style={styles.section}>
+					<View style={{marginBottom: 30}}>
 						<Text style={styles.sectionTitle}>⭐ My Ratings</Text>
 						{ratings.length === 0 ?
 							<View style={styles.emptyCard}>
@@ -235,7 +227,7 @@ export default function AccountPage() {
 									Rate stores to improve your recommendations
 								</Text>
 							</View>
-						:	ratings
+							: ratings
 								.sort(
 									(a, b) =>
 										new Date(b.ratedAt).getTime() -
@@ -282,8 +274,8 @@ export default function AccountPage() {
 					</View>
 
 					{/* Logout Button */}
-					<TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-						<Text style={styles.logoutButtonText}>🚪 Logout</Text>
+					<TouchableOpacity style={styles.logoutButton} onPress={logoutUser}>
+						<Text style={styles.logoutButtonText}>{<u>Logout</u>}</Text>
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
@@ -431,7 +423,6 @@ const styles = StyleSheet.create({
 	removeButton: {
 		paddingHorizontal: 12,
 		paddingVertical: 6,
-		backgroundColor: "#fee",
 		borderRadius: 6,
 	},
 	removeText: {
@@ -453,15 +444,13 @@ const styles = StyleSheet.create({
 		marginLeft: 5,
 	},
 	logoutButton: {
-		backgroundColor: "#ff6b6b",
-		paddingVertical: 14,
-		borderRadius: 10,
-		alignItems: "center",
-		marginTop: 10,
+		padding: 0,
+		alignItems: "center",	
+		alignSelf: "center",
 	},
 	logoutButtonText: {
-		color: "#fff",
-		fontSize: 16,
-		fontWeight: "600",
+		fontSize: 13,
+		color: "#666",
+		marginBottom: 12,
 	},
 });
