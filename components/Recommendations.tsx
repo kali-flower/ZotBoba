@@ -48,7 +48,7 @@ export default function Recommendations() {
 				ratings: userModel.ratings || [],
 			};
 
-      const ranked = null;
+      const ranked = [];
       if (stores.length > 0) {
         const ranked = RankingEngine.rankStores(stores, contextData, userPrefs);
 			  setRankedStores(ranked);

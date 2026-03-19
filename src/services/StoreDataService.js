@@ -184,8 +184,8 @@ class StoreDataService {
 
 		// Combine and deduplicate results
 		const allPlaces = [
-			...(bobaData.results || []),
-			...(cafeData.results || []),
+			...(bobaData.places || []),
+			...(cafeData.places || []),
 		];
 
 		// Convert to our format
@@ -214,10 +214,11 @@ class StoreDataService {
 	 */
 	convertGooglePlaceToStore(place) {
 		// Determine category based on types
+		const name = place.displayName?.text || '';
 		const isCoffee =
 			place.types?.includes("cafe") ||
-			place.name.toLowerCase().includes("coffee") ||
-			place.name.toLowerCase().includes("starbucks");
+			name.toLowerCase().includes("coffee") ||
+			name.toLowerCase().includes("starbucks");
 
 		const category = isCoffee ? "coffee" : "boba";
 
