@@ -161,12 +161,13 @@ class StoreDataService {
 		console.log("🌐 Fetching from Google Places API...");
 
 		const radiusMeters = radiusMiles * 1609.34; // Convert miles to meters
+		const baseUrl = '/api/places';
 
 		// Search for boba/bubble tea shops
-		const bobaUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=${radiusMeters}&keyword=boba+bubble+tea&key=${GOOGLE_PLACES_API_KEY}`;
+		const bobaUrl = `${baseUrl}?location=${location.latitude},${location.longitude}&radius=${radiusMeters}&keyword=boba+bubble+tea`;
 
 		// Search for cafes
-		const cafeUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude},${location.longitude}&radius=${radiusMeters}&type=cafe&key=${GOOGLE_PLACES_API_KEY}`;
+		const cafeUrl = `${baseUrl}?location=${location.latitude},${location.longitude}&radius=${radiusMeters}&type=cafe`;
 
 		const [bobaResponse, cafeResponse] = await Promise.all([
 			fetch(bobaUrl),
@@ -178,11 +179,8 @@ class StoreDataService {
 		}
 
 		const bobaData = await bobaResponse.json();
+		console.log("API response:", bobaData);
 		const cafeData = await cafeResponse.json();
-
-		if (bobaData.status !== "OK" && bobaData.status !== "ZERO_RESULTS") {
-			throw new Error(`Google Places API error: ${bobaData.status}`);
-		}
 
 		// Combine and deduplicate results
 		const allPlaces = [
@@ -195,12 +193,16 @@ class StoreDataService {
 			this.convertGooglePlaceToStore(place),
 		).filter(Boolean);
 
-		const uniqueStores = null;
+		let uniqueStores = [];
 		// Remove duplicates by place_id
 		if (stores) {
 			uniqueStores = Array.from(
 				new Map(stores.map((store) => [store.id, store])).values(),
 			);
+		}
+
+		if (uniqueStores.length == 0) {
+			console.log('No stores open');
 		}
 
 		console.log(`✅ Found ${uniqueStores.length} stores from Google Places open`);
@@ -234,7 +236,7 @@ class StoreDataService {
 		}
 		// Filter out closed stores
 		const currentTime = new Date();
-		const currentHour = now.getHours();
+		const currentHour = currentTime.getHours();
 		const isCurrentlyOpen = currentHour >= hours.open && currentHour < hours.close;
 		if (!isCurrentlyOpen) return null;
 
@@ -247,10 +249,10 @@ class StoreDataService {
 			category === "coffee" ? ["dairy", "soy", "nuts"] : ["dairy"];
 
 		return {
-			id: place.place_id,
-			name: place.name,
-			latitude: place.geometry.location.lat,
-			longitude: place.geometry.location.lng,
+			id: place.id,
+			name: place.displayName?.text,
+			latitude: place.location?.latitude,
+			longitude: place.location?.longitude,
 			category,
 			menu,
 			specialties: ["iced", "hot"],
@@ -258,9 +260,9 @@ class StoreDataService {
 			allergens,
 			rating: place.rating || 4.0,
 			// Additional Google Places data
-			address: place.vicinity,
+			address: place.formattedAddress,
 			priceLevel: place.price_level,
-			isOpen: place.opening_hours?.open_now,
+			isOpen: place.currentOpeningHours?.openNow,
 		};
 	}
 

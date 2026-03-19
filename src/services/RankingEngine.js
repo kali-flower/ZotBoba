@@ -36,7 +36,7 @@ class RankingEngine {
 		});
 
 		// Return top 5
-		return ranked.slice(0, 5);
+		return ranked.length > 9 ? ranked.slice(0, 9) : ranked;
 	}
 
 	// Calculate total score for a store

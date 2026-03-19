@@ -49,7 +49,7 @@ export default function Recommendations() {
 			};
 
       const ranked = null;
-      if (stores) {
+      if (stores.length > 0) {
         const ranked = RankingEngine.rankStores(stores, contextData, userPrefs);
 			  setRankedStores(ranked);
         setAnyStoresOpen(true);

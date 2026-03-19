@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 export function StoresClosed() {
     return (
         <View style={storesClosedStyles.container}>
-            <Text>No open stores found. Please expand your search radius or try again later.</Text>
+            <Text>No open stores found. Please try again later.</Text>
         </View>
     )
 }
