@@ -1,7 +1,7 @@
 import { colors } from "@/src/theme/tokens";
 import { Dimensions, StyleSheet } from "react-native";
 
-const { width, height } = Dimensions.get("window");
+export const { width, height } = Dimensions.get("window");
 const smallBobaSize = width * 0.1;
 const bigBobaSize = width * 0.16;
 

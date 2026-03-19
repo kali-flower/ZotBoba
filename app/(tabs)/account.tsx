@@ -3,6 +3,7 @@
 // Week 8 - Final
 
 import NavBar from "@/components/ui/navbar";
+import { height, styles } from "@/constants/styles";
 import { PersonalModel } from "@/src/models/personalModel";
 import { getCurrentUser, logout } from "@/src/storage/currentUserControls";
 import {
@@ -18,7 +19,7 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	View,
+	View
 } from "react-native";
 
 export default function AccountPage() {
@@ -119,8 +120,8 @@ export default function AccountPage() {
 		return (
 			<>
 				<NavBar /> {/* ADD NAVBAR HERE */}
-				<View style={styles.container}>
-					<Text style={styles.loadingText}>Loading...</Text>
+				<View style={accountStyles.container}>
+					<Text style={accountStyles.loadingText}>Loading...</Text>
 				</View>
 			</>
 		);
@@ -138,152 +139,170 @@ export default function AccountPage() {
 	return (
 		<>
 			<NavBar /> {/* ADD NAVBAR HERE */}
-			<ScrollView style={styles.container}>
-				<View style={styles.content}>
-					<Text style={styles.title}>👤 Account</Text>
-					<Text style={styles.subtitle}>Logged in as {username}</Text>
+			<ScrollView style={accountStyles.container} contentContainerStyle={{ flexGrow: 1 }}>
+				<View style={accountStyles.backgroudContainer}>
+					<View style={styles.circleTopLeft} />
+					<View style={styles.circleBottomLeft} />
+					<View style={styles.circleCenterCenter} />
+					<View style={styles.circleBottomCenter} />
+					<View style={styles.circleBottomRight} />
+					<View style={styles.circleTopRight} />
+					<View style={styles.circleCenterRight} />
+					<View style={accountStyles.content}>
+						<Text style={accountStyles.title}>👤 Account</Text>
+						<Text style={accountStyles.subtitle}>Logged in as {username}</Text>
 
-					{/* Stats */}
-					<View style={styles.statsContainer}>
-						<View style={styles.statCard}>
-							<Text style={styles.statNumber}>{favorites.length}</Text>
-							<Text style={styles.statLabel}>Favorites</Text>
-						</View>
-						<View style={styles.statCard}>
-							<Text style={styles.statNumber}>{ratings.length}</Text>
-							<Text style={styles.statLabel}>Rated</Text>
-						</View>
-						<View style={styles.statCard}>
-							<Text style={styles.statNumber}>{avgRating}</Text>
-							<Text style={styles.statLabel}>Avg Rating</Text>
-						</View>
-					</View>
+						<View style={accountStyles.contentBackground}>
 
-					{/* Preferences Summary */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>⚙️ Preferences</Text>
-						<View style={styles.card}>
-							<Text style={styles.prefText}>
-								🍬 Sweetness: {personalModel.sweetness}
-							</Text>
-							<Text style={styles.prefText}>🧊 Ice: {personalModel.ice}</Text>
-							<Text style={styles.prefText}>
-								🚫 Allergies: {personalModel.allergies.join(", ") || "None"}
-							</Text>
-						</View>
-						<TouchableOpacity
-							style={styles.editButton}
-							onPress={() => router.push("/(tabs)/settings")}
-						>
-							<Text style={styles.editButtonText}>Edit Preferences</Text>
-						</TouchableOpacity>
-					</View>
-
-					{/* Favorites */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>❤️ My Favorites</Text>
-						{favorites.length === 0 ?
-							<View style={styles.emptyCard}>
-								<Text style={styles.emptyText}>No favorites yet</Text>
-								<Text style={styles.emptySubtext}>
-									Tap the ❤️ icon on stores to save them here
-								</Text>
+							{/* Stats */}
+							<View style={accountStyles.statsContainer}>
+								<View style={accountStyles.statCard}>
+									<Text style={accountStyles.statNumber}>{favorites.length}</Text>
+									<Text style={accountStyles.statLabel}>Favorites</Text>
+								</View>
+								<View style={accountStyles.statCard}>
+									<Text style={accountStyles.statNumber}>{ratings.length}</Text>
+									<Text style={accountStyles.statLabel}>Rated</Text>
+								</View>
+								<View style={accountStyles.statCard}>
+									<Text style={accountStyles.statNumber}>{avgRating}</Text>
+									<Text style={accountStyles.statLabel}>Avg Rating</Text>
+								</View>
 							</View>
-							: favorites.map((storeId, index) => {
-								const rating = ratings.find((r) => r.storeId === storeId);
-								const storeName = rating?.storeName || `Store ${index + 1}`;
 
-								return (
-									<View key={storeId} style={styles.itemCard}>
-										<View style={styles.itemHeader}>
-											<View style={styles.itemInfo}>
-												<Text style={styles.itemName}>{storeName}</Text>
-												{rating && (
-													<Text style={styles.ratingText}>
-														{"⭐".repeat(rating.rating)} ({rating.rating}/5)
-													</Text>
-												)}
-											</View>
-											<TouchableOpacity
-												style={styles.removeButton}
-												onPress={() => removeFavorite(storeId)}
-											>
-												<Text style={styles.removeText}>Remove</Text>
-											</TouchableOpacity>
-										</View>
-									</View>
-								);
-							})
-						}
-					</View>
-
-					{/* Ratings */}
-					<View style={{marginBottom: 20}}>
-						<Text style={styles.sectionTitle}>⭐ My Ratings</Text>
-						{ratings.length === 0 ?
-							<View style={styles.emptyCard}>
-								<Text style={styles.emptyText}>No ratings yet</Text>
-								<Text style={styles.emptySubtext}>
-									Rate stores to improve your recommendations
-								</Text>
+							{/* Preferences Summary */}
+							<View style={accountStyles.section}>
+								<Text style={accountStyles.sectionTitle}>⚙️ Preferences</Text>
+								<View style={accountStyles.card}>
+									<Text style={accountStyles.prefText}>
+										🍬 Sweetness: {personalModel.sweetness}
+									</Text>
+									<Text style={accountStyles.prefText}>🧊 Ice: {personalModel.ice}</Text>
+									<Text style={accountStyles.prefText}>
+										🚫 Allergies: {personalModel.allergies.join(", ") || "None"}
+									</Text>
+								</View>
+								<TouchableOpacity
+									style={accountStyles.editButton}
+									onPress={() => router.push("/(tabs)/settings")}
+								>
+									<Text style={accountStyles.editButtonText}>Edit Preferences</Text>
+								</TouchableOpacity>
 							</View>
-							: ratings
-								.sort(
-									(a, b) =>
-										new Date(b.ratedAt).getTime() -
-										new Date(a.ratedAt).getTime(),
-								)
-								.map((rating) => (
-									<View key={rating.storeId} style={styles.itemCard}>
-										<View style={styles.itemHeader}>
-											<View style={styles.itemInfo}>
-												<Text style={styles.itemName}>{rating.storeName}</Text>
-												<Text style={styles.itemDate}>
-													{new Date(rating.ratedAt).toLocaleDateString()}
-												</Text>
-											</View>
-											<TouchableOpacity
-												style={styles.removeButton}
-												onPress={() => removeRating(rating.storeId)}
-											>
-												<Text style={styles.removeText}>Remove</Text>
-											</TouchableOpacity>
-										</View>
 
-										{/* Editable stars */}
-										<View style={styles.starsRow}>
-											{[1, 2, 3, 4, 5].map((star) => (
-												<TouchableOpacity
-													key={star}
-													onPress={() =>
-														updateRating(rating.storeId, rating.storeName, star)
-													}
-												>
-													<Text style={styles.starLarge}>
-														{star <= rating.rating ? "⭐" : "☆"}
-													</Text>
-												</TouchableOpacity>
-											))}
-											<Text style={styles.ratingNumber}>
-												({rating.rating}/5)
-											</Text>
-										</View>
+							{/* Favorites */}
+							<View style={accountStyles.section}>
+								<Text style={accountStyles.sectionTitle}>❤️ My Favorites</Text>
+								{favorites.length === 0 ?
+									<View style={accountStyles.emptyCard}>
+										<Text style={accountStyles.emptyText}>No favorites yet</Text>
+										<Text style={accountStyles.emptySubtext}>
+											Tap the ❤️ icon on stores to save them here
+										</Text>
 									</View>
-								))
-						}
-					</View>
+									: favorites.map((storeId, index) => {
+										const rating = ratings.find((r) => r.storeId === storeId);
+										const storeName = rating?.storeName || `Store ${index + 1}`;
 
-					{/* Logout Button */}
-					<TouchableOpacity style={styles.logoutButton} onPress={logoutUser}>
-						<Text style={styles.logoutButtonText}>Logout</Text>
-					</TouchableOpacity>
+										return (
+											<View key={storeId} style={accountStyles.itemCard}>
+												<View style={accountStyles.itemHeader}>
+													<View style={accountStyles.itemInfo}>
+														<Text style={accountStyles.itemName}>{storeName}</Text>
+														{rating && (
+															<Text style={accountStyles.ratingText}>
+																{"⭐".repeat(rating.rating)} ({rating.rating}/5)
+															</Text>
+														)}
+													</View>
+													<TouchableOpacity
+														style={accountStyles.removeButton}
+														onPress={() => removeFavorite(storeId)}
+													>
+														<Text style={accountStyles.removeText}>Remove</Text>
+													</TouchableOpacity>
+												</View>
+											</View>
+										);
+									})
+								}
+							</View>
+
+							{/* Ratings */}
+							<View style={{ marginBottom: 20 }}>
+								<Text style={accountStyles.sectionTitle}>⭐ My Ratings</Text>
+								{ratings.length === 0 ?
+									<View style={accountStyles.emptyCard}>
+										<Text style={accountStyles.emptyText}>No ratings yet</Text>
+										<Text style={accountStyles.emptySubtext}>
+											Rate stores to improve your recommendations
+										</Text>
+									</View>
+									: ratings
+										.sort(
+											(a, b) =>
+												new Date(b.ratedAt).getTime() -
+												new Date(a.ratedAt).getTime(),
+										)
+										.map((rating) => (
+											<View key={rating.storeId} style={accountStyles.itemCard}>
+												<View style={accountStyles.itemHeader}>
+													<View style={accountStyles.itemInfo}>
+														<Text style={accountStyles.itemName}>{rating.storeName}</Text>
+														<Text style={accountStyles.itemDate}>
+															{new Date(rating.ratedAt).toLocaleDateString()}
+														</Text>
+													</View>
+													<TouchableOpacity
+														style={accountStyles.removeButton}
+														onPress={() => removeRating(rating.storeId)}
+													>
+														<Text style={accountStyles.removeText}>Remove</Text>
+													</TouchableOpacity>
+												</View>
+
+												{/* Editable stars */}
+												<View style={accountStyles.starsRow}>
+													{[1, 2, 3, 4, 5].map((star) => (
+														<TouchableOpacity
+															key={star}
+															onPress={() =>
+																updateRating(rating.storeId, rating.storeName, star)
+															}
+														>
+															<Text style={accountStyles.starLarge}>
+																{star <= rating.rating ? "⭐" : "☆"}
+															</Text>
+														</TouchableOpacity>
+													))}
+													<Text style={accountStyles.ratingNumber}>
+														({rating.rating}/5)
+													</Text>
+												</View>
+											</View>
+										))
+								}
+							</View>
+
+							{/* Logout Button */}
+							<TouchableOpacity style={accountStyles.logoutButton} onPress={logoutUser}>
+								<Text style={accountStyles.logoutButtonText}>Logout</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
 				</View>
 			</ScrollView>
 		</>
 	);
 }
 
-const styles = StyleSheet.create({
+const accountStyles = StyleSheet.create({
+	backgroudContainer: {
+		flex: 1,
+		backgroundColor: colors.background,
+		flexGrow: 1,
+		minHeight: height,
+	},
 	container: {
 		flex: 1,
 		backgroundColor: colors.background,
@@ -292,6 +311,17 @@ const styles = StyleSheet.create({
 		padding: 20,
 		paddingTop: 60,
 		paddingBottom: 40,
+	},
+	contentBackground: {
+		backgroundColor: colors.search_bg,
+		borderColor: colors.card_border,
+		borderWidth: 1,
+		borderStyle: "solid",
+		borderRadius: 17,
+		paddingTop: 30,
+		paddingBottom: 30,
+		paddingLeft: 20,
+		paddingRight: 20
 	},
 	title: {
 		fontSize: 32,
@@ -318,7 +348,7 @@ const styles = StyleSheet.create({
 	},
 	statCard: {
 		flex: 1,
-		backgroundColor: colors.search_bg,
+		backgroundColor: colors.account_bg,
 		borderColor: colors.card_border,
 		borderWidth: 1,
 		padding: 15,
@@ -345,7 +375,7 @@ const styles = StyleSheet.create({
 		color: "#333",
 	},
 	card: {
-		backgroundColor: colors.search_bg,
+		backgroundColor: colors.account_bg,
 		borderColor: colors.card_border,
 		borderWidth: 1,
 		padding: 15,
@@ -357,20 +387,21 @@ const styles = StyleSheet.create({
 		color: "#333",
 	},
 	editButton: {
-		backgroundColor: colors.navbar,
+		backgroundColor: colors.circles,
 		borderColor: colors.card_border,
 		borderWidth: 1,
 		padding: 12,
+		paddingVertical: 16,
 		borderRadius: 8,
 		marginTop: 10,
 	},
 	editButtonText: {
 		textAlign: "center",
 		fontWeight: "600",
-		color: "#333",
+		color: "#fff",
 	},
 	emptyCard: {
-		backgroundColor: colors.search_bg,
+		backgroundColor: colors.account_bg,
 		borderColor: colors.card_border,
 		borderWidth: 2,
 		borderStyle: "dashed",
@@ -389,7 +420,7 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	itemCard: {
-		backgroundColor: colors.search_bg,
+		backgroundColor: colors.account_bg,
 		borderColor: colors.card_border,
 		borderWidth: 1,
 		padding: 15,
@@ -444,7 +475,7 @@ const styles = StyleSheet.create({
 		marginLeft: 5,
 	},
 	logoutButton: {
-		backgroundColor: colors.navbar,
+		backgroundColor: colors.circles,
 		borderColor: colors.card_border,
 		borderWidth: 1,
 		padding: 12,
@@ -452,10 +483,10 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		marginTop: 10,
 		alignSelf: "center",
-		},
+	},
 	logoutButtonText: {
 		textAlign: "center",
 		fontWeight: "600",
-		color: "#333",
+		color: "#fff",
 	},
 });
