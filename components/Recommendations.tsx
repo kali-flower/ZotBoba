@@ -1,6 +1,5 @@
 // components/RecommendationsScreen.tsx
 import CurrentContext from "@/components/CurrentContext";
-import RankedStores from "@/components/RankedStores";
 import UserPreferences from "@/components/UserPreferences";
 import { styles } from "@/constants/styles";
 import { ContextData, RankedStore } from "@/constants/types";
@@ -13,6 +12,8 @@ import { loadPersonalModel } from "@/src/storage/personalModelUse";
 import { colors } from "@/src/theme/tokens";
 import { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { StoresClosed } from "./nostoresfound";
+import RankedStores from "./RankedStores";
 
 export default function Recommendations() {
 	const [context, setContext] = useState<ContextData | null>(null);
@@ -22,6 +23,7 @@ export default function Recommendations() {
 	);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+  const [anyStoresOpen, setAnyStoresOpen] = useState<boolean>(false);
 
 	const getRecommendations = async () => {
 		setLoading(true);
@@ -46,8 +48,15 @@ export default function Recommendations() {
 				ratings: userModel.ratings || [],
 			};
 
-			const ranked = RankingEngine.rankStores(stores, contextData, userPrefs);
-			setRankedStores(ranked);
+      const ranked = null;
+      if (stores) {
+        const ranked = RankingEngine.rankStores(stores, contextData, userPrefs);
+			  setRankedStores(ranked);
+        setAnyStoresOpen(true);
+      }
+      else {
+        setAnyStoresOpen(false);
+      }
 		} catch (err) {
 			setError((err as Error).message);
 		} finally {
@@ -90,9 +99,14 @@ export default function Recommendations() {
 				</View>
 			)}
 
+      {/* change true to !anyStoresOpen after testing */}
+      {context && !anyStoresOpen && !loading && (
+        <StoresClosed/>
+      )}
+
 			{context && !loading && <CurrentContext context={context} />}
 
-			{context && rankedStores.length > 0 && !loading && (
+			{context && anyStoresOpen && rankedStores.length > 0 && !loading && (
 				<RankedStores
 					context={context}
 					rankedStores={rankedStores}

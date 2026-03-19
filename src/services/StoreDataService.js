@@ -193,15 +193,18 @@ class StoreDataService {
 		// Convert to our format
 		const stores = allPlaces.map((place) =>
 			this.convertGooglePlaceToStore(place),
-		);
+		).filter(Boolean);
 
+		const uniqueStores = null;
 		// Remove duplicates by place_id
-		const uniqueStores = Array.from(
-			new Map(stores.map((store) => [store.id, store])).values(),
-		);
+		if (stores) {
+			uniqueStores = Array.from(
+				new Map(stores.map((store) => [store.id, store])).values(),
+			);
+		}
 
-		console.log(`✅ Found ${uniqueStores.length} stores from Google Places`);
-		return uniqueStores.slice(0, 20); // Limit to 20 stores
+		console.log(`✅ Found ${uniqueStores.length} stores from Google Places open`);
+		return uniqueStores.length > 20 ? uniqueStores.slice(0, 20) : uniqueStores; // Limit to 20 stores
 	}
 
 	/**
@@ -229,6 +232,11 @@ class StoreDataService {
 				// Use default hours if parsing fails
 			}
 		}
+		// Filter out closed stores
+		const currentTime = new Date();
+		const currentHour = now.getHours();
+		const isCurrentlyOpen = currentHour >= hours.open && currentHour < hours.close;
+		if (!isCurrentlyOpen) return null;
 
 		// Guess menu based on category
 		const menu =
@@ -323,9 +331,9 @@ class StoreDataService {
 		const a =
 			Math.sin(dLat / 2) * Math.sin(dLat / 2) +
 			Math.cos(this.toRadians(lat1)) *
-				Math.cos(this.toRadians(lat2)) *
-				Math.sin(dLon / 2) *
-				Math.sin(dLon / 2);
+			Math.cos(this.toRadians(lat2)) *
+			Math.sin(dLon / 2) *
+			Math.sin(dLon / 2);
 
 		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		return R * c;
