@@ -3,7 +3,7 @@
 // Week 8 - Shreya
 
 import { styles } from "@/constants/styles";
-import { getCurrentUser, logout } from "@/src/storage/currentUserControls";
+import { getCurrentUser } from "@/src/storage/currentUserControls";
 import { loadPersonalModel, savePersonalModel } from "@/src/storage/personalModelUse";
 import { colors } from "@/src/theme/tokens";
 import { router } from "expo-router";
@@ -42,9 +42,8 @@ export default function SettingsScreen() {
 		setLoading(false);
 	};
 
-	const logoutUser = async () => {
-		await logout();
-		router.replace("/(tabs)");
+	const returnToSettings = async () => {
+		router.replace("/(tabs)/account");
 	}
 
 	const handleSave = async () => {
@@ -123,7 +122,7 @@ export default function SettingsScreen() {
 				<View style={styles.circleTopRight} />
 				<View style={styles.circleCenterRight} />
 				<View style={styles2.content}>
-					<Text style={styles2.title}>Account Settings</Text>
+					<Text style={styles2.title}>Preferences</Text>
 					<Text style={styles2.subtitle}>Customize your boba preferences</Text>
 
 					<View style={styles2.contentBackground}>
@@ -287,10 +286,10 @@ export default function SettingsScreen() {
 						{/* Logout Button */}
 						<TouchableOpacity
 							style={styles2.logoutButton}
-							onPress={logoutUser}
+							onPress={returnToSettings}
 						>
 							<Text style={styles2.logoutButtonText}>
-								{<u>Logout</u>}
+								{<u>Back to settings</u>}
 							</Text>
 						</TouchableOpacity>
 					</View>
