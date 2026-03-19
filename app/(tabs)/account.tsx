@@ -218,7 +218,7 @@ export default function AccountPage() {
 					</View>
 
 					{/* Ratings */}
-					<View style={{marginBottom: 30}}>
+					<View style={{marginBottom: 20}}>
 						<Text style={styles.sectionTitle}>⭐ My Ratings</Text>
 						{ratings.length === 0 ?
 							<View style={styles.emptyCard}>
@@ -275,7 +275,7 @@ export default function AccountPage() {
 
 					{/* Logout Button */}
 					<TouchableOpacity style={styles.logoutButton} onPress={logoutUser}>
-						<Text style={styles.logoutButtonText}>{<u>Logout</u>}</Text>
+						<Text style={styles.logoutButtonText}>Logout</Text>
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
@@ -444,13 +444,18 @@ const styles = StyleSheet.create({
 		marginLeft: 5,
 	},
 	logoutButton: {
-		padding: 0,
-		alignItems: "center",	
+		backgroundColor: colors.navbar,
+		borderColor: colors.card_border,
+		borderWidth: 1,
+		padding: 12,
+		paddingHorizontal: 20,
+		borderRadius: 8,
+		marginTop: 10,
 		alignSelf: "center",
-	},
+		},
 	logoutButtonText: {
-		fontSize: 13,
-		color: "#666",
-		marginBottom: 12,
+		textAlign: "center",
+		fontWeight: "600",
+		color: "#333",
 	},
 });
