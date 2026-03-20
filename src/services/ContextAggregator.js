@@ -101,6 +101,8 @@ class ContextAggregator {
 				humidity: data.main.humidity,
 			};
 
+			console.log("weather fetched: ", this.currentContext.weather);
+
 			return this.currentContext.weather;
 		} catch (error) {
 			console.error("Error fetching weather:", error);

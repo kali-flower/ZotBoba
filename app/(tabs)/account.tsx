@@ -14,7 +14,6 @@ import { colors } from "@/src/theme/tokens";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-	Alert,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -92,28 +91,14 @@ export default function AccountPage() {
 
 	const removeRating = async (storeId: string) => {
 		if (!personalModel || !username) return;
-
-		Alert.alert(
-			"Remove Rating",
-			"Are you sure you want to remove this rating?",
-			[
-				{ text: "Cancel", style: "cancel" },
-				{
-					text: "Remove",
-					style: "destructive",
-					onPress: async () => {
-						const updated = {
-							...personalModel,
-							ratings: (personalModel.ratings || []).filter(
-								(r) => r.storeId !== storeId,
-							),
-						};
-						setPersonalModel(updated);
-						await savePersonalModel(username, updated);
-					},
-				},
-			],
-		);
+		const updated = {
+			...personalModel,
+			ratings: (personalModel.ratings || []).filter(
+				(r) => r.storeId !== storeId,
+			),
+		};
+		setPersonalModel(updated);
+		await savePersonalModel(username, updated);
 	};
 
 	if (loading || !personalModel) {
